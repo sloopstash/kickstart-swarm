@@ -5,32 +5,62 @@ services:
     command: "/usr/bin/supervisord -c /etc/supervisord.conf"
     ports:
       - "8080:80"
+    configs:
+      - source: supervisor-server
+        target: /etc/supervisord.conf
+      - source: app-supervisor
+        target: /etc/supervisord.d/app.ini
+      - source: nginx-supervisor
+        target: /etc/supervisord.d/nginx.ini
+      - source: nginx-server
+        target: /etc/nginx/nginx.conf
+      - source: app-nginx
+        target: /etc/nginx/conf.d/app.conf
     volumes:
       - /opt/kickstart-swarm/app:/opt/app
-      - /opt/kickstart-swarm/nginx/conf/main.conf:/etc/nginx/nginx.conf
-      - /opt/kickstart-swarm/nginx/conf/app.conf:/etc/nginx/conf.d/app.conf
-      - /opt/kickstart-swarm/supervisor/conf/main.conf:/etc/supervisord.conf
-      - /opt/kickstart-swarm/supervisor/conf/app.ini:/etc/supervisord.d/app.ini
-      - /opt/kickstart-swarm/supervisor/conf/nginx.ini:/etc/supervisord.d/nginx.ini
     depends_on:
       - redis
     networks:
-      - crm-stg
+      - common
     deploy:
       mode: replicated
       replicas: 5
   redis:
     image: sloopstash/redis:v1
     command: "/usr/bin/supervisord -c /etc/supervisord.conf"
+    configs:
+      - source: supervisor-server
+        target: /etc/supervisord.conf
+      - source: redis-supervisor
+        target: /etc/supervisord.d/redis.ini
+      - source: redis-server
+        target: /opt/redis/conf/redis.conf
     volumes:
-      - /opt/kickstart-swarm/redis/data:/opt/redis/data
-      - /opt/kickstart-swarm/redis/log:/opt/redis/log
-      - /opt/kickstart-swarm/redis/conf/main.conf:/opt/redis/conf/redis.conf
-      - /opt/kickstart-swarm/supervisor/conf/main.conf:/etc/supervisord.conf
-      - /opt/kickstart-swarm/supervisor/conf/redis.ini:/etc/supervisord.d/redis.ini
+      - redis-data:/opt/redis/data
+      - redis-log:/opt/redis/log
     networks:
-      - crm-stg
+      - common
+configs:
+  supervisor-server:
+    file: /opt/kickstart-swarm/supervisor/conf/main.conf
+  nginx-supervisor:
+    file: /opt/kickstart-swarm/supervisor/conf/nginx.ini
+  nginx-server:
+    file: /opt/kickstart-swarm/nginx/conf/main.conf
+  redis-supervisor:
+    file: /opt/kickstart-swarm/supervisor/conf/redis.ini
+  redis-server:
+    file: /opt/kickstart-swarm/redis/conf/main.conf
+  app-supervisor:
+    file: /opt/kickstart-swarm/supervisor/conf/app.ini
+  app-nginx:
+    file: /opt/kickstart-swarm/nginx/conf/app.conf
+volumes:
+  redis-data:
+    driver: local
+  redis-log:
+    driver: local
 networks:
-  crm-stg:
+  common:
     external:
-      name: crm-stg
+      name: common

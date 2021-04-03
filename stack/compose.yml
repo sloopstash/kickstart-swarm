@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   app:
     image: sloopstash/app:v1
@@ -62,5 +62,8 @@ volumes:
     driver: local
 networks:
   common:
-    external:
-      name: common
+    driver: overlay
+    ipam:
+      driver: default
+      config:
+        - subnet: 100.1.0.0/16

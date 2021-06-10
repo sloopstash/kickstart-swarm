@@ -42,19 +42,19 @@ services:
       - common
 configs:
   supervisor-server:
-    file: /opt/kickstart-swarm/supervisor/conf/main.conf
+    file: ../supervisor/conf/main.conf
   nginx-supervisor:
-    file: /opt/kickstart-swarm/supervisor/conf/nginx.ini
+    file: ../supervisor/conf/nginx.ini
   nginx-server:
-    file: /opt/kickstart-swarm/nginx/conf/main.conf
+    file: ../nginx/conf/main.conf
   redis-supervisor:
-    file: /opt/kickstart-swarm/supervisor/conf/redis.ini
+    file: ../supervisor/conf/redis.ini
   redis-server:
-    file: /opt/kickstart-swarm/redis/conf/main.conf
+    file: ../redis/conf/main.conf
   app-supervisor:
-    file: /opt/kickstart-swarm/supervisor/conf/app.ini
+    file: ../supervisor/conf/app.ini
   app-nginx:
-    file: /opt/kickstart-swarm/nginx/conf/app.conf
+    file: ../nginx/conf/app.conf
 volumes:
   redis-data:
     driver: local

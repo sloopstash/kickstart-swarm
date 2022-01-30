@@ -25,6 +25,17 @@ services:
     deploy:
       mode: replicated
       replicas: 5
+      placement:
+        constraints:
+          - "node.platform.os==linux"
+          - "node.role==worker"
+          - "node.labels.type==on-premise"
+          - "node.labels.provider==host"
+          - "node.labels.service==virtualbox"
+          - "node.labels.region==local"
+          - "node.labels.availability_zone==local-b"
+        preferences:
+          - spread: node.labels.availability_zone
   redis:
     image: sloopstash/redis:v1
     command: "/usr/bin/supervisord -c /etc/supervisord.conf"
@@ -40,6 +51,20 @@ services:
       - redis-log:/opt/redis/log
     networks:
       - common
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.platform.os==linux"
+          - "node.role==manager"
+          - "node.labels.type==on-premise"
+          - "node.labels.provider==host"
+          - "node.labels.service==virtualbox"
+          - "node.labels.region==local"
+          - "node.labels.availability_zone==local-a"
+        preferences:
+          - spread: node.labels.availability_zone
 configs:
   supervisor-server:
     file: ../supervisor/conf/main.conf

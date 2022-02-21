@@ -57,12 +57,12 @@ services:
       placement:
         constraints:
           - "node.platform.os==linux"
-          - "node.role==manager"
+          - "node.role==worker"
           - "node.labels.type==on-premise"
           - "node.labels.provider==host"
           - "node.labels.service==virtualbox"
           - "node.labels.region==local"
-          - "node.labels.availability_zone==local-a"
+          - "node.labels.availability_zone==local-c"
         preferences:
           - spread: node.labels.availability_zone
 configs:

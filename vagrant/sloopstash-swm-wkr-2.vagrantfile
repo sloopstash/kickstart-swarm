@@ -15,10 +15,10 @@ Vagrant.configure("2") do |config|
   config.vm.box = "centos/7"
 
   # Define VirtualBox machine name.
-  config.vm.define "sloopstash-swm-wkr"
+  config.vm.define "sloopstash-swm-wkr-2"
 
   # Set virtual machine hostname.
-  config.vm.hostname = "sloopstash-swm-wkr"
+  config.vm.hostname = "sloopstash-swm-wkr-2"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -38,7 +38,7 @@ Vagrant.configure("2") do |config|
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-  config.vm.network "private_network", ip: "192.168.99.108"
+  config.vm.network "private_network", ip: "192.168.99.125"
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -71,7 +71,7 @@ Vagrant.configure("2") do |config|
     vb.cpus = "1"
 
     # VirtualBox machine name.
-    vb.name = "sloopstash-swm-wkr"
+    vb.name = "sloopstash-swm-wkr-2"
   end
   #
   # View the documentation for the provider you are using for more

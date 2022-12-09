@@ -1,0 +1,94 @@
+version: '3.8'
+services:
+  app:
+    image: sloopstash/app:v1
+    command: "/usr/bin/supervisord -c /etc/supervisord.conf"
+    ports:
+      - "8083:80"
+    configs:
+      - source: supervisor-server
+        target: /etc/supervisord.conf
+      - source: app-supervisor
+        target: /etc/supervisord.d/app.ini
+      - source: nginx-supervisor
+        target: /etc/supervisord.d/nginx.ini
+      - source: nginx-server
+        target: /etc/nginx/nginx.conf
+      - source: app-nginx
+        target: /etc/nginx/conf.d/app.conf
+    volumes:
+      - ../app:/opt/app
+    depends_on:
+      - redis
+    networks:
+      - common
+    deploy:
+      mode: replicated
+      replicas: 5
+      placement:
+        constraints:
+          - "node.platform.os==linux"
+          - "node.role==worker"
+          - "node.labels.type==on-premise"
+          - "node.labels.provider==host"
+          - "node.labels.service==virtualbox"
+          - "node.labels.region==local"
+          - "node.labels.availability_zone==local-b"
+        preferences:
+          - spread: node.labels.availability_zone
+  redis:
+    image: sloopstash/redis:v1
+    command: "/usr/bin/supervisord -c /etc/supervisord.conf"
+    configs:
+      - source: supervisor-server
+        target: /etc/supervisord.conf
+      - source: redis-supervisor
+        target: /etc/supervisord.d/redis.ini
+      - source: redis-server
+        target: /opt/redis/conf/redis.conf
+    volumes:
+      - redis-data:/opt/redis/data
+      - redis-log:/opt/redis/log
+    networks:
+      - common
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.platform.os==linux"
+          - "node.role==worker"
+          - "node.labels.type==on-premise"
+          - "node.labels.provider==host"
+          - "node.labels.service==virtualbox"
+          - "node.labels.region==local"
+          - "node.labels.availability_zone==local-c"
+        preferences:
+          - spread: node.labels.availability_zone
+configs:
+  supervisor-server:
+    file: ../supervisor/conf/main.conf
+  nginx-supervisor:
+    file: ../supervisor/conf/nginx.ini
+  nginx-server:
+    file: ../nginx/conf/main.conf
+  redis-supervisor:
+    file: ../supervisor/conf/redis.ini
+  redis-server:
+    file: ../redis/conf/main.conf
+  app-supervisor:
+    file: ../supervisor/conf/app.ini
+  app-nginx:
+    file: ../nginx/conf/app.conf
+volumes:
+  redis-data:
+    driver: local
+  redis-log:
+    driver: local
+networks:
+  common:
+    driver: overlay
+    ipam:
+      driver: default
+      config:
+        - subnet: 100.1.3.0/24

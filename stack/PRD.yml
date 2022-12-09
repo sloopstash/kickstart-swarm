@@ -4,7 +4,7 @@ services:
     image: sloopstash/app:v1
     command: "/usr/bin/supervisord -c /etc/supervisord.conf"
     ports:
-      - "${APP_PORT}:80"
+      - "8084:80"
     configs:
       - source: supervisor-server
         target: /etc/supervisord.conf
@@ -91,4 +91,4 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: ${NETWORK}
+        - subnet: 100.1.4.0/24

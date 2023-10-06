@@ -1,2 +1,2 @@
 # Kickstart Swarm
-The ultimate aim of this Swarm starter-kit is to help you deploy a sample CRM app service and Redis database service on Docker containers in Swarm cluster.
+Our Docker Swarm starter-kit repository contains Docker Compose YAML configurations, Vagrant VM configurations, and workload-specific configurations required to automate and run containerized workloads in the Docker Swarm cluster.
